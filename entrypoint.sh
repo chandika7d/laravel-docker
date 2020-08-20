@@ -33,9 +33,5 @@ export PATH="$PATH:$HOME/.composer/vendor/bin"
 
 echo "PHP: "
 php --version
-echo "NodeJs: "
-node --version
-echo "Yarn: "
-yarn --version
 
 exec "$@"
