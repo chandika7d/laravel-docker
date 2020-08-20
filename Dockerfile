@@ -6,7 +6,6 @@ RUN additionalPackages=" \
         msmtp-mta \
         openssh-client \
         rsync \
-        curl \
     " \
     buildDeps=" \
         freetds-dev \
@@ -54,7 +53,6 @@ RUN additionalPackages=" \
     " \
     && phpModules=" \
         bcmath \
-        curl \
         bz2 \
         calendar \
         dba \
@@ -111,20 +109,11 @@ RUN additionalPackages=" \
     && docker-php-source delete \
     && docker-php-ext-enable $phpModules
 
-# Install pecl modules
-RUN pecl install amqp \
-    && pecl install igbinary \
-    && pecl install mongodb \
-    && pecl install redis \
-    && pecl install ast \
-    && docker-php-ext-enable mongodb redis ast amqp
-
 # Install composer and prestissimo plugin and put binary into $PATH
 RUN curl -sS https://getcomposer.org/installer | php \
     && mv composer.phar /usr/local/bin/ \
     && ln -s /usr/local/bin/composer.phar /usr/local/bin/composer \
     && /usr/local/bin/composer global require hirak/prestissimo
-
 
 # Install testing tools
 RUN /usr/local/bin/composer global require phpunit/phpunit
@@ -137,16 +126,6 @@ RUN /usr/local/bin/composer global require phpstan/phpstan vimeo/psalm phan/phan
 
 # Install CD tools
 RUN /usr/local/bin/composer global require deployer/deployer deployer/recipes
-
-# Install Node.js & Yarn
-RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
-    && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list \
-    && curl -sL https://deb.nodesource.com/setup_10.x | bash - \
-    && apt-get install -y unzip nodejs build-essential yarn \
-    && yarn global add pngquant-bin jpegtran-bin cwebp-bin optipng-bin node-sass \
-    && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false -o APT::AutoRemove::SuggestsImportant=false $buildDeps \
-    && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
 
 COPY entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
