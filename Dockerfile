@@ -128,5 +128,6 @@ RUN /usr/local/bin/composer global require phpstan/phpstan vimeo/psalm phan/phan
 RUN /usr/local/bin/composer global require deployer/deployer deployer/recipes
 
 COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["php", "-a"]
